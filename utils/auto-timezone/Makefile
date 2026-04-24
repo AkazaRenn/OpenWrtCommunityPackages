@@ -13,7 +13,7 @@ define Package/auto-timezone
 	SECTION:=utils
 	CATEGORY:=Utilities
 	TITLE:=Auto set timezone by IP
-  PKGARCH:=all
+	PKGARCH:=all
 	DEPENDS:=+zoneinfo-all
 endef
 
