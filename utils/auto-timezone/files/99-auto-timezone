@@ -1,9 +1,5 @@
 #!/bin/sh
 
-log() {
-    logger -t "auto-timezone" "$*"
-}
-
 if [ "${INTERFACE}" = "loopback" ]; then
     exit 0
 fi
@@ -13,6 +9,10 @@ fi
 if [ "${ACTION}" = "ifupdate" ] && [ -z "${IFUPDATE_ADDRESSES}" ] && [ -z "${IFUPDATE_DATA}" ]; then
     exit 0
 fi
+
+log() {
+    logger -t "auto-timezone" "$*"
+}
 
 endpoint="$(uci -q get auto-timezone.config.endpoint)"
 if [ $? -ne 0 ]; then
