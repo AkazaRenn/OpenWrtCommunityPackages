@@ -24,7 +24,7 @@ for i in {1..5}; do
     timezone_iana="$(wget --timeout=5 -qO- "${endpoint}")" && break || sleep 1
 done
 
-if [ -z "$timezone_iana" ]; then
+if [ -z "${timezone_iana}" ]; then
     log "Failed to get timezone"
     exit 1
 fi
