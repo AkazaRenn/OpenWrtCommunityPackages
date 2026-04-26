@@ -11,12 +11,25 @@ if [ "${ACTION}" = "ifupdate" ] && [ -z "${IFUPDATE_ADDRESSES}" ] && [ -z "${IFU
 fi
 
 log() {
-    logger -t "auto-timezone" "$*"
+    logger -t "auto-timezone" "$@"
+}
+
+log_info() {
+    log -p user.info "$*"
+}
+
+log_error() {
+    log -p user.err "$*"
+}
+
+get_posix_timezone() {
+    iana_timezone=$1
+    tail -n1 /usr/share/zoneinfo/${iana_timezone}
 }
 
 endpoint="$(uci -q get auto-timezone.config.endpoint)"
 if [ $? -ne 0 ]; then
-    log "Endpoint not set"
+    log_error "Endpoint not set"
     exit 1
 fi
 
@@ -25,18 +38,18 @@ for i in {1..5}; do
 done
 
 if [ -z "${timezone_iana}" ]; then
-    log "Failed to get timezone"
+    log_error "Failed to get timezone"
     exit 1
 fi
 
-timezone_posix="$(tail -n1 /usr/share/zoneinfo/${timezone_iana})"
+timezone_posix="$(get_posix_timezone ${timezone_iana})"
 if [ $? -ne 0 ]; then
-    log "Invalid timezone"
+    log_error "Invalid timezone"
     exit 1
 fi
 
 if [ "${timezone_iana}" != "$(uci get system.@system[0].zonename)" ] || [  "${timezone_posix}" != "$(uci get system.@system[0].timezone)" ]; then
-    log "Updating timezone, IANA: ${timezone_iana}, POSIX: ${timezone_posix}"
+    log_info "Updating timezone, IANA: ${timezone_iana}, POSIX: ${timezone_posix}"
     uci set system.@system[0].zonename="${timezone_iana}"
     uci set system.@system[0].timezone="${timezone_posix}"
     uci commit system

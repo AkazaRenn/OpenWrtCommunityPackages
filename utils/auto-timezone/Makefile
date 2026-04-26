@@ -21,8 +21,11 @@ define Package/auto-timezone/description
 Hotplug script to automatically configure the timezone UCI settings based on the IP address.
 
 The user needs to set their own endpoint to get the IANA timezone string, e.g.:
-	uci set auto-timezone.config.endpoint="https://domain.tld/json"
-	uci commit
+	uci set auto-timezone.config.endpoint="https://domain.tld/timezone"
+	uci commit auto-timezone
+
+The endpoint is expected to respond GET requests by a plaintext one-line IANA timezone string, e.g. "Europe/London".
+The endpoint can be verified by directly accessing the its URL from a browser by the address bar.
 endef
 
 define Build/Compile
